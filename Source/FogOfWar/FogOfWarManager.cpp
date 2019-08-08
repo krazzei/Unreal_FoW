@@ -54,28 +54,31 @@ void AFogOfWarManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// CurrentTime += 10 * DeltaTime;
-	//
-	// CurrentColor = FMath::Lerp(StartColor, FinalColor, CurrentTime / 10);
-	//
-	// if (CurrentTime >= 10.f)
-	// {
-	// 	const auto Temp = FinalColor;
-	// 	FinalColor = StartColor;
-	// 	StartColor = Temp;
-	// 	CurrentTime = 0.0f;
-	// }
-	//
-	// if (GFrameNumber % 3 == 0)
-	// {
-	// 	//UpdateTexture();
-	// }
-
-	UpdateTexture();
+	CurrentTime += 10 * DeltaTime;
+	
+	CurrentColor = FMath::Lerp(StartColor, FinalColor, CurrentTime / 10);
+	
+	if (CurrentTime >= 10.f)
+	{
+		const auto Temp = FinalColor;
+		FinalColor = StartColor;
+		StartColor = Temp;
+		CurrentTime = 0.0f;
+	}
+	
+	if (GFrameNumber % 3 == 0)
+	{
+		UpdateTexture();
+	}
 }
 
 void AFogOfWarManager::UpdateTexture()
 {
+	for (auto i = 0; i < 128 * 128; ++i)
+	{
+		FogBuffer[i] = CurrentColor;
+	}
+
 	FogTexture->UpdateTextureRegions(0, 1, FogTextureRegion, 128, 1, FogBuffer);
 	FogMatInstance->SetTextureParameterValue(FName("DynamicTexture"), FogTexture);
 }
